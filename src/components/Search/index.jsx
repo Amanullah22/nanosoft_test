@@ -24,6 +24,8 @@ const Search = (props) => {
             //console.log(repos)
             props.reposData(repos)
             props.loading(false)
+            setFetched(false)
+            setFetching(false)
         }
     }, [fetched])
 
@@ -40,16 +42,13 @@ const Search = (props) => {
             let repos = []
             let promises = [];
 
-            //turn through the pages
             for (let p = 1; p <= 10; p++) {
                 url = `https://api.github.com/search/repositories?q=${searchTerm}+language:${language}&sort=stars&order=desc&per_page=100&page=${p}`;
 
-                //fetch data
                 for (let j = 0; j < 1; j++) {
-                    promises.push(fetch(url).then(res => res.json())
+                    promises.push(fetch(url, { headers: { authorization: "token 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" } }).then(res => res.json())
                         .then(data => {
 
-                            //push data to array
                             for (let i = 0; i < data.items.length; i++) {
                                 repos = repos.concat(data.items[i]);
                             }
