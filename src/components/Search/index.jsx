@@ -46,7 +46,7 @@ const Search = (props) => {
                 url = `https://api.github.com/search/repositories?q=${searchTerm}+language:${language}&sort=stars&order=desc&per_page=100&page=${p}`;
 
                 for (let j = 0; j < 1; j++) {
-                    promises.push(fetch(url, { headers: { authorization: "token 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" } }).then(res => res.json())
+                    promises.push(fetch(url, { headers: { authorization: "token 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" } }).then(res => res.json())
                         .then(data => {
 
                             for (let i = 0; i < data.items.length; i++) {
