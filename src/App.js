@@ -6,14 +6,6 @@ function App() {
   const [repos, setRepos] = useState([])
   const [loading, setLoading] = useState(false)
 
-  // useEffect(() => {
-  //   console.log(repos)
-  // }, [repos])
-
-  // useEffect(() => {
-  //   console.log(loading)
-  // }, [loading])
-
   const getReposData = (data) => {
     setRepos(data)
   }
