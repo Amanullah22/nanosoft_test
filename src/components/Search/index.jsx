@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useStyles } from './styles.js'
+const { REACT_APP_GITHUB_TOKEN } = process.env
 
 const Search = (props) => {
 
@@ -34,7 +35,7 @@ const Search = (props) => {
     }, [fetching])
 
     const submitQuery = () => {
-        if (!searchTerm.length || !language.length) {
+        if (!searchTerm.length) {
             setError(true)
         } else {
             setFetching(true)
@@ -42,26 +43,50 @@ const Search = (props) => {
             let repos = []
             let promises = [];
 
-            for (let p = 1; p <= 10; p++) {
-                url = `https://api.github.com/search/repositories?q=${searchTerm}+language:${language}&sort=stars&order=desc&per_page=100&page=${p}`;
+            if (!language.length) {
+                for (let p = 1; p <= 10; p++) {
+                    url = `https://api.github.com/search/repositories?q=${searchTerm}&sort=stars&order=desc&per_page=100&page=${p}`;
 
-                for (let j = 0; j < 1; j++) {
-                    promises.push(fetch(url, { headers: { authorization: "token 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" } }).then(res => res.json())
-                        .then(data => {
+                    for (let j = 0; j < 1; j++) {
+                        promises.push(fetch(url, { headers: { authorization: `token ${REACT_APP_GITHUB_TOKEN}` } }).then(res => res.json())
+                            .then(data => {
 
-                            for (let i = 0; i < data.items.length; i++) {
-                                repos = repos.concat(data.items[i]);
-                            }
+                                for (let i = 0; i < data.items.length; i++) {
+                                    repos = repos.concat(data.items[i]);
+                                }
 
-                        }));
+                            }));
+                    }
                 }
-            }
 
-            Promise.all(promises)
-                .then(() => {
-                    setFetched(true)
-                    setRepos(repos)
-                })
+                Promise.all(promises)
+                    .then(() => {
+                        setFetched(true)
+                        setRepos(repos)
+                    })
+
+            } else {
+                for (let p = 1; p <= 10; p++) {
+                    url = `https://api.github.com/search/repositories?q=${searchTerm}+language:${language}&sort=stars&order=desc&per_page=100&page=${p}`;
+
+                    for (let j = 0; j < 1; j++) {
+                        promises.push(fetch(url, { headers: { authorization: `token ${REACT_APP_GITHUB_TOKEN}` } }).then(res => res.json())
+                            .then(data => {
+
+                                for (let i = 0; i < data.items.length; i++) {
+                                    repos = repos.concat(data.items[i]);
+                                }
+
+                            }));
+                    }
+                }
+
+                Promise.all(promises)
+                    .then(() => {
+                        setFetched(true)
+                        setRepos(repos)
+                    })
+            }
         }
     }
 
@@ -77,7 +102,7 @@ const Search = (props) => {
                 autoHideDuration={3000}
                 onClose={handleClose}
             >
-                <Alert severity="error">Please provide all fields</Alert>
+                <Alert severity="error">Please atleast provide a search term</Alert>
             </Snackbar>
             <TextField value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className={classes.field} id="search-term" label="Search Term" variant="outlined" required />
             <TextField value={language} onChange={(e) => setLanguage(e.target.value)} className={classes.field} id="language" label="Programming Language" variant="outlined" required />
